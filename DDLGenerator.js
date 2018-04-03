@@ -128,6 +128,14 @@ define(function (require, exports, module) {
         if (elem.primaryKey || !elem.nullable) {
             line += " NOT NULL";
         }
+        if (elem.primaryKey) {
+            line += " AUTO_INCREMENT";
+        }
+        if (elem.documentation) {
+            line += "COMMENT '";
+            line += elem.documentation;
+            line += "'";
+        }
         return line;
     };
 
