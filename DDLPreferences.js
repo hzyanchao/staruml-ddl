@@ -72,6 +72,12 @@ define(function (require, exports, module) {
             description: "Number of spaces for indentation.",
             type: "Number",
             default: 4
+        },
+        "ddl.gen.specialColumns": {
+            text: "Special Columns",
+            description: "Json of special columns.",
+            type: "String",
+            default: ""
         }
     };
 
@@ -86,7 +92,8 @@ define(function (require, exports, module) {
             dropTable        : PreferenceManager.get("ddl.gen.dropTable"),
             dbms             : PreferenceManager.get("ddl.gen.dbms"),
             useTab           : PreferenceManager.get("ddl.gen.useTab"),
-            indentSpaces     : PreferenceManager.get("ddl.gen.indentSpaces")
+            indentSpaces     : PreferenceManager.get("ddl.gen.indentSpaces"),
+            specialColumns   : PreferenceManager.get("ddl.gen.specialColumns")
         };
     }
 
