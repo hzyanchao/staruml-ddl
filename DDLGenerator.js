@@ -132,7 +132,7 @@ define(function (require, exports, module) {
             line += " AUTO_INCREMENT";
         }
         if (elem.documentation) {
-            line += "COMMENT '";
+            line += " COMMENT '";
             line += elem.documentation;
             line += "'";
         }
