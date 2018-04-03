@@ -82,32 +82,6 @@ define(function (require, exports, module) {
     };
 
     /**
-     * Pre Process Columns
-     * @param {Array.<ERDColumn>} columns
-     * @param {Array.<ERDColumn>}
-     */
-    DDLGenerator.prototype.preProcessCol = function (columns, options) {
-        var isContain = function(arrays, item) {
-            arrays.forEach(arrayItem){
-                if (arrayItem.name == item.name) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        if (options.specialColumns && Object.prototype.toString.call(options.specialColumns)=='[object Array]') {
-            var filteredColumns = options.specialColumns.filter(function (specialColumn) {
-                return !isContain(columns, specialColumn);
-            });
-            return options.specialColumns.concat(columns);
-        } else {
-            return columns;
-        }
-    };
-    
-
-    /**
      * Return Primary Keys for an Entity
      * @param {type.ERDEntity} elem
      * @return {Array.<ERDColumn>}
@@ -165,6 +139,24 @@ define(function (require, exports, module) {
         return line;
     };
 
+
+    /**
+     * Pre Process Columns
+     * @param {Object} options
+     * @param {Array.<Object>}
+     */
+    DDLGenerator.prototype.getSpecialColumns = function (options) {
+        try{
+            var specialColumns = JSON.parse(options.specialColumns);
+            if (specialColumns && Object.prototype.toString.call(specialColumns)=='[object Array]') {
+                return specialColumns;
+            } else {
+                return [];
+            }
+        } catch (err) {
+            return [];
+        }
+    };
 
     /**
      * Write Foreign Keys
@@ -246,10 +238,24 @@ define(function (require, exports, module) {
         codeWriter.writeLine("CREATE TABLE " + self.getId(elem.name, options) + " (");
         codeWriter.indent();
 
-        var newColumns = self.preProcessCol(elem.columns, options);
+        // Special Columns
+        var specialColumns = self.getSpecialColumns(options);
+        specialColumns.forEach(function(specialColumn) {
+            if (specialColumn.primaryKey) {
+                primaryKeys.push(self.getId(specialColumn.name, options));
+            }
+            lines.push(specialColumn.line);
+        });
+
+        var specialColumnNames = specialColumns.map(function (col) {
+            return col.name;
+        });
 
         // Columns
-        newColumns.forEach(function (col) {
+        elem.columns.forEach(function (col) {
+            if (specialColumnNames.indexOf(col.name) >= 0) {
+                return;
+            }
             if (col.primaryKey) {
                 primaryKeys.push(self.getId(col.name, options));
             }
