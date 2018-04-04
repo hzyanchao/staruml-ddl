@@ -281,7 +281,11 @@ define(function (require, exports, module) {
         }
 
         codeWriter.outdent();
-        codeWriter.writeLine(");");
+        if (elem.documentation) {
+            codeWriter.writeLine(") COMMENT '" + elem.documentation + "' ;");
+        } else {
+            codeWriter.writeLine(");");
+        }
         codeWriter.writeLine();
     };
 
